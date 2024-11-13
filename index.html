@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Parsing Demo</title>
+    <!-- Menambahkan Font Awesome untuk Ikon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: #ecf0f1;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #e74c3c;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        #dataDisplay {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(52, 152, 219, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease-in-out;
+        }
+
+        #dataDisplay:hover {
+            transform: scale(1.03);
+        }
+
+        .data-item {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .data-item:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .data-item i {
+            font-size: 1.5rem;
+            color: #3498db;
+            margin-right: 10px;
+        }
+
+        .data-item strong {
+            color: #3498db;
+        }
+
+        .data-item span {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: #3498db;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        /* Style for responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            #dataDisplay {
+                padding: 20px;
+            }
+
+            .data-item {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Data JSON Parsing</h1>
+    <div id="dataDisplay"></div>
+
+    <script>
+        async function fetchData() {
+            const response = await fetch('http://127.0.0.1:5000/get_data');
+            const data = await response.json();
+
+            // Display data in HTML
+            document.getElementById("dataDisplay").innerHTML = `
+                <div class="data-item">
+                    <i class="fas fa-temperature-high"></i>
+                    <strong>Suhu Max:</strong> <span>${data.suhumax}</span>
+                </div>
+                <div class="data-item">
+                    <i class="fas fa-temperature-low"></i>
+                    <strong>Suhu Min:</strong> <span>${data.suhumin}</span>
+                </div>
+                <div class="data-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <strong>Suhu Rata-rata:</strong> <span>${data.suhurata.join(', ')}</span>
+                </div>
+                <h3>Nilai Suhu Max & Humid Max:</h3>
+                ${data.nilai_suhu_max_humid_max.map(item => `
+                    <div class="data-item">
+                        <i class="fas fa-id-badge"></i>
+                        <strong>ID:</strong> <span>${item.idx}</span>, 
+                        <i class="fas fa-thermometer-half"></i>
+                        <strong>Suhu:</strong> <span>${item.suhun}</span>, 
+                        <i class="fas fa-tint"></i>
+                        <strong>Kelembapan:</strong> <span>${item.humd}</span>, 
+                        <i class="fas fa-sun"></i>
+                        <strong>Kecerahan:</strong> <span>${item.kecerahan}</span>, 
+                        <i class="fas fa-clock"></i>
+                        <strong>Timestamp:</strong> <span>${item.timestamp}</span>
+                    </div>
+                `).join('')}
+                <h3>Month Year Max:</h3>
+                ${data.month_year_max.map(item => `
+                    <div class="data-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <strong>Bulan-Tahun:</strong> <span>${item.month_year}</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        fetchData();
+    </script>
+</body>
+</html>
